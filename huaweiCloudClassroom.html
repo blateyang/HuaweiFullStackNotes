@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Classroom平台首页</title>
+    <script>
+    const swiperData = [
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-8.d14241daf518717981c6.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-1.fdbf82d4c2ca7fad3225.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-2.64b1407e7a8db89d6cf2.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-3.ce76c93c7a8a149ce2a2.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-5.0e9bb68d425a4a5c3b18.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-6.80cafe61bcb20a98eb1e.jpg' }
+    ]
+
+      window.onload = function() {
+
+        // 1. 动态创建轮播图和子弹头
+        // 创建轮播图
+        const swiperDiv = document.getElementsByClassName("swiper-container")[0]
+        const swiperBoxDiv = document.createElement("div")
+        swiperBoxDiv.className = "box"
+        //设置轮播图容器的宽度
+        swiperBoxDiv.style.width = `${parseInt(swiperData.length+1) *100}vw`;
+        swiperData.forEach( (item) => {
+          const imgEl = document.createElement("img")
+          imgEl.src = item["imgurl"]
+          swiperBoxDiv.append(imgEl)
+        })
+        const imgEl = document.createElement("img")
+        imgEl.src = swiperData[0]["imgurl"] // 多添加一张首图，便于自然过渡
+        swiperBoxDiv.append(imgEl)
+        // 创建切换控件
+        swiperDiv.append(swiperBoxDiv)
+        const swiperPagnitionDiv = document.createElement("div")
+        swiperPagnitionDiv.className = "swiper-pagination-box"
+        for(let i=0; i<swiperData.length; i++) {
+          const spanEl = document.createElement("span")
+          spanEl.classList.add("swiper-pagination-item")
+          if(i == 0) {
+            spanEl.classList.add("swiper-pagination-item-active")
+          }
+          swiperPagnitionDiv.append(spanEl)
+        }
+        swiperDiv.append(swiperPagnitionDiv)
+
+
+        // 2. 利用循环左移轮播图实现自动轮播效果，间隔5s
+        function resetPagStyle(pagItems) {
+          for(let i in pagItems) {
+              pagItems[i].className = "swiper-pagination-item"
+            }
+        }
+
+        function autoplay() {
+          timer = setInterval(function() {       
+          if(curIdx+1 < swiperData.length) {
+            swiperBoxDiv.style.transition = "all 0.5s"
+            swiperBoxDiv.style.left = `-${(curIdx+1)*100}vw`
+            curIdx++
+          } else {// 轮播到倒数第2张图
+            swiperBoxDiv.style.left = `-${(curIdx+1)*100}vw`
+            setTimeout(function() { //快速由最后一张过渡到第一张
+              swiperBoxDiv.style.transition = "0s"
+              swiperBoxDiv.style.left = `-0vw`
+            }, 500)
+            curIdx = 0
+          }
+          // 重置切换控件样式
+          resetPagStyle(pagItems)
+          pagItems[curIdx].className = "swiper-pagination-item-active"
+  
+          }, 5000)
+        }
+        
+        let curIdx = 0
+        let pagItems = document.querySelectorAll(".swiper-pagination-item")
+        autoplay()
+
+        // 3. 手动控制切换控件
+        for(let i in pagItems) {
+          pagItems[i].onclick = function() {
+            clearInterval(timer)
+            curIdx = parseInt(i)
+            swiperBoxDiv.style.transition = "all 0.5s"
+            swiperBoxDiv.style.left = `-${(curIdx+1)*100}vw`
+            resetPagStyle(pagItems)
+            this.className = "swiper-pagination-item-active"
+            autoplay()
+          }
+        }
+        /*
+        swiperWrapper = document.getElementById("swiper-wrapper");
+        var swiperSlideLen = document.getElementsByClassName("swiper-slide").length;
+        var bulletCollection = document.getElementsByClassName("swiper-paganition")[0].children; // 不是数组，而是HTMLCollection
+        activeIndex = 0;
+        function autoplay() {
+          activeIndex++;
+
+          if(activeIndex >= swiperSlideLen) {
+            activeIndex = 0;
+          }
+          // 向左平移
+          swiperWrapper.style.transitionDuration = "300ms";
+          swiperWrapper.style.transform = "translate("+ (-1073)*activeIndex +"px, 0)"; // 相对父元素平移的距离
+          // 给当前轮播图对应的bullet激活
+
+          for(var i=0; i<swiperSlideLen; i++) {
+            bulletCollection[i].className = "swiper-paganition-bullet";
+            if(i === activeIndex) {
+              bulletCollection[i].className = "swiper-paganition-bullet-active";
+            }
+         }
+        } 
+        // 为bullet绑定监控事件
+        var bulletArr = Array.from(bulletCollection);
+        bulletArr.map(function(bullet) {
+          bullet.addEventListener("click", function() {
+            var bulletId = +bullet.id.split('-')[1];
+            console.log("bullet-id:"+bulletId)
+            activeIndex = bulletId - 1;
+            swiperWrapper.style.transform = "translate("+ (-1688)*activeIndex +"px, 0)"; // 相对父元素平移的距离
+
+            for(var i=0; i<swiperSlideLen; i++) {
+                bulletArr[i].className = "swiper-paganition-bullet";
+            }
+            bullet.className = "swiper-paganition-bullet-active";
+
+          })
+        })
+        timer = setInterval(autoplay, 2000);
+      } */
+    }
+    
+    </script>
+    <style>
+        * { margin: 0px; padding: 0px; }
+        *,::after, ::before {box-sizing: border-box;}
+        /* 导航栏样式和布局 */
+        .nav {
+          padding: 0 40px;
+          position: fixed;
+          z-index: 100;
+          top: 0;
+          height: 60px;
+          width: 100%;
+          display: flex; /*子元素采用flex布局*/
+          line-height: 40px;
+          background: white;
+        }
+
+        .nav-box {
+          margin-left: 40px;
+        }
+        .public-logo { 
+          width: 120px;
+          height: 40px;
+          background-image: url(https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.15.003/logo.451780fa3b1dcc60e811.svg);
+          background-size: 100% 100%;
+        }
+
+        .btn-circle{
+          border-radius: 16px;
+          padding: 2px;
+          cursor: pointer;
+        }
+
+        .nav-left-box { /* button .nav-left-box的写法不起作用 */
+          width: 100px;
+          height: 30px;
+          display: inline-block;
+          margin-right: 60px;
+        }
+
+        .login-logo{
+          background-color: orange;
+          color: white;
+          display: inline-block;
+          width: 30px;
+          height: 30px;
+          line-height: 30px;
+          border-radius: 50%;
+          font-size: 15px;
+          margin: 4px 10px 0px 10px;
+          cursor: pointer;
+        }
+        .ng-box{
+          float: left;
+          margin-right: 48px;
+        }
+
+        .ng-box:hover {
+          cursor: pointer;
+          color: blue;
+        }
+
+        .right-box {
+          display: flex;
+          margin-left: auto;
+        }
+
+        .right-box li {
+          list-style: none;
+          display: inline-block;
+        }
+
+        /* 主容器样式 */
+        .main-container {
+          overflow-x: auto;
+          overflow-y: auto;
+          margin-top: 60px;
+          height: calc(100vh-60px);
+        }
+        /* 轮播图样式 */
+        .header {
+          position: relative
+         }
+
+         .swiper-container {
+            margin-left:auto;
+            margin-right:auto;
+            position:relative;
+            overflow:hidden;
+            list-style:none;
+            padding:0;
+            z-index:1
+          }
+
+
+   .box {
+      transition: all 0.5s;
+      position: relative;
+      left: 0;
+    }
+
+    .box img {
+      width: 100vw;
+      height: 100%;
+      float: left;
+    }
+
+    .swiper-pagination-box { 
+      height: 30px;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      z-index: 3;
+      display: flex;
+    }
+
+    .swiper-pagination-item {
+      height: 8px;
+      width: 8px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, .4);
+      margin: 11px 5px;
+      transition: all 0.3s;
+    }
+
+    .swiper-pagination-item-active {
+      padding: 0 16px;
+      background: #5E7CE0;
+    }          
+
+        /*  #swiper-wrapper {
+            position:relative;
+            width:100%;
+            height:100%;
+            z-index:1;
+            display:flex;
+            transition-property:transform;
+            box-sizing:content-box
+            }
+
+            .swiper-slide {
+
+              flex-shrink:0;
+              width:100%;
+              height:100%;
+              position:relative;
+              transition-property:transform
+            }
+
+        .swiper-paganition {
+            width: 200px;
+            height: 20px;
+            position: absolute;
+            margin-left: -100px;
+            left: 50%;
+            bottom: 40px;
+            z-index: 2;
+            text-align: center;
+
+          }
+         .swiper-paganition-bullet {
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          background-color: #000;
+          opacity: .2;
+          border-radius: 50%;
+         }
+
+         .swiper-paganition-bullet-active {
+          display: inline-block;
+          width: 30px;
+          height: 10px;
+
+          background: #5e7ce0;
+          opacity: .8;
+          border-radius: 10px;
+         } */
+        /* 主内容样式 */
+        .content {
+          width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          flex-wrap: wrap; /* 折叠 */
+        }
+
+        .content .intro-box {
+          display: flex;
+          flex-wrap:nowrap;
+          padding:30px;
+          position:relative;
+          top:-25px;
+          z-index:2;
+          width:1200px;
+          background:#fff;
+          box-shadow:0 0 20px 0 rgba(41,48,64,.1);
+          border-radius:5px;
+          align-items:center; 
+        }
+
+        .content .intro-box .intro-box-left {
+          flex: 1;
+          padding-right: 100px;
+          font-size: 16px;
+          color: #5e6678;
+          line-height: 32px;
+        }
+
+        .content .intro-box button {
+          width: 96px;
+          height: 32px;
+          font-size: 16px;
+          color: #fff;
+          border: 0;
+          border-radius: 16px;
+          background-color: #5e7ce0;
+          position: absolute;
+          top: 50%;
+          margin-top: -16px;
+          right: 40px;
+          cursor: pointer;
+        }
+        .content .course-title{ 
+          text-align: center;
+          margin: 30px 0 40px;
+
+        }
+        
+        a[class="course-card"] {
+          text-decoration: none;
+        }
+
+        .content .course-card {
+          width: 378px;
+          height: 386px;
+          border: 1px solid #f7f8fa;
+          border-radius: 12px;
+          margin: 0 30px 30px 0;
+          float: left;
+          overflow: hidden;
+          transition: .2s;
+          box-shadow: 0 4px 16px 0 rgba(124,142,227,.12);
+         }
+
+         .content .course-card:nth-child(3n){
+           margin: 0 0 30px; /*总宽1200,每个course-card宽380,2个间隔，每个间隔30,最后一个没有 */
+         }
+         
+
+        .content .course-card:hover{
+          box-shadow: 0px 10px 20px 0 rgba(124,142,227,.4);
+          transform: translateY(-10px); /* 鼠标悬浮时浮动突出 */
+        }
+
+        .content .course-card .card-home {
+          background-attachment: fixed;
+          width: 380px;
+          height: 200px;
+          border-radius: 12px 12px 0 0;
+          background: url(https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.12.003/cloud-class.5974862e24f459dd518a.png) center top;
+        }
+
+        /* 不能只写.card-home-bg，优先级比.content .course-card .card-home低，会被覆盖 */
+        .content .course-card .card-home-bg1 { 
+          background-position-y: 0px; /* 实现对背景图的拆分 */
+        }
+        .content .course-card .card-home-bg2 {
+          background-position-y: -200px;
+        }
+        .content .course-card .card-home-bg3 {
+          background-position-y: -400px;
+        }
+        .content .course-card .card-home-bg4 {
+          background-position-y: -600px;
+        }
+        .content .course-card .card-home-bg5 {
+          background-position-y: -800px;
+        }
+        .content .course-card .card-home-bg6 {
+          background-position-y: -1000px;
+        }
+        .content .course-card .card-home-bg7 {
+          background-position-y: -1200px;
+        }
+        .content .course-card .card-home-bg8 {
+          background-position-y: -1400px;
+        }
+        .content .course-card .card-home-bg9 {
+          background-position-y: -1600px;
+        }
+        .content .course-card .card-home-bg10 {
+          background-position-y: -1800px;
+        }
+        .content .course-card .card-home-bg11 {
+          background-position-y: -2000px;
+        }
+        .content .course-card .card-home-bg12 {
+          background-position-y: -2200px;
+        }
+
+        .content .course-card .card-item-name {
+          height: 170px;
+          text-overflow: ellipsis;
+          font-weight: bold;
+          color: black;
+        }
+
+        .content .course-card .card-item-info .card-item-teacher, .card-item-place, .card-item-time{
+          float: left;
+          max-width: calc((68%-10)/2);
+          margin: 5px;
+        }
+
+        .content .course-card .card-item-info .icon-classroom-user, .icon-classroom-school{
+          width: 16px;
+          height: 16px;
+          background: url(https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.12.003/classroom.sprite.d2922e64a1fdfbcab62c.png?1582096505080) no-repeat;        
+          display: inline-block;
+        }
+
+        .content .course-card .card-item-info .icon-classroom-user{
+          background-position: -312px -464px;
+        }
+
+        .content .course-card .card-item-info .icon-classroom-school{
+          background-position: -408px -440px;
+        }
+
+        .content .course-card .card-item-info .teacher-name, .place-name{
+          max-width: 80%;
+          display: inline-block;
+          white-space: nowrap; /* 不换行 */
+          overflow: hidden;
+          text-overflow: ellipsis; /* 文本溢出使用...代替 */
+        }
+
+        .content .course-card .card-item-info .card-item-time{
+          display: inline-block;
+          height: 20px;
+          box-sizing: border-box;
+          border: 1px solid #eee;
+          border-radius: 12px;
+          vertical-align: middle;
+          float: right;
+        }
+
+        .content .course-card .card-desc {
+          height: 48px;
+          line-height: 24px;
+          width: 100%;
+          font-size: 14px;
+          color: #5e6678;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          letter-spacing: .5px;
+          word-break: break-all;
+        }
+
+        .content .course-card .card-line{
+          margin-top: 5px;
+          width: 100%;
+          height: 1px;
+          opacity: .05;
+          background: #000;
+        }
+
+        .content .course-card .card-freetime {
+          height: 60px;
+          line-height: 60px;
+          padding-left: 280px;
+        }
+
+        .content .course-card .card-freetime span{
+          color: red;
+          background: pink;
+          padding: 2px;
+          border-radius: 2px;
+        }
+
+        .market-box {
+          background: #fafafa;
+          width: 100%;
+        }
+
+        .content .bottom-btn {
+          width: 100%;
+          text-align: center;
+          border-radius: 5px;
+          padding: 5px;
+        }
+
+        .content .activity-box {
+          width: 1200px;
+          border-bottom: 1px solid #e3e5e9;
+         }
+
+         .content .activity-box .coruse-title {
+           margin: 30 0 40;
+         }
+
+         .content .activity-box .notice-box {
+          overflow: hidden;
+          width: 100%;
+          border-bottom: 1px solid #e3e5e9;
+          padding-bottom: 30px;
+          margin-bottom: 30px;
+         }
+
+         .content .activity-box .notice-box img {
+          max-width: 200px;
+          float: left;
+         }
+
+         .pull-left .notice-title:hover{
+          color: blue;
+          cursor: pointer;
+         }
+
+         .content .activity-box .notice-box .notice-content {
+          background: url(https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.12.003/notice.b7839ff8db59462824d7.png) no-repeat;
+         }
+
+         .notice-box .notice-content .left-icon {
+            float: left;
+            width: 160px;
+            height: 96px;
+            background-color: red;
+            margin-right: 30px;
+            background-image: url(https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/notice.215e169ce5a0ddc20722.png);
+          }
+
+         .notice-box .notice-content .notice-content-bg1 {
+           background-position-y: 0px;
+         }
+         .notice-box .notice-content .notice-content-bg2 {
+           background-position-y: -96px;
+         }
+         .notice-box .notice-content .notice-content-bg3 {
+           background-position-y: -192px;
+         }
+         .notice-box .notice-content .notice-content-bg4 {
+           background-position-y: -288px;
+         }
+
+
+         .content .activity-box .notice-box .notice-content li {
+           list-style: none;
+           display: inline;
+         }
+
+         /* 注脚样式 */
+        .footer {
+          width: 100%;
+          background: #f3f3f3;
+          height: 100px;
+        }
+
+        .footer .footer-content {
+          width: 1200px;
+          margin: 0 auto;
+          height: 100%;
+          padding-top: 35px;
+          color: rgba(37,43,58,.7);
+          line-height: 20px;
+        }
+
+        .footer .footer-content .footer-copyright {
+          float: left;
+        }
+
+        .footer .footer-content .footer-law {
+          float: right;
+        }
+
+        .clearfix::after {
+          content: "";
+          clear: both;
+          display: block;
+        }
+
+
+    </style>
+
+</head>
+<body>
+<div class="nav">
+    <!--页面导航区域-->
+  <div class="public-logo"></div>
+  <div class="nav-box">
+    <div id="navigate0" class="ng-box">首页</div>
+    <div id="navigate1" class="ng-box">教训市场</div>
+    <div id="navigate2" class="ng-box">云课堂</div>
+    <div id="navigate3" class="ng-box">培训认证</div>
+    <div id="navigate4" class="ng-box">云端实验室</div>
+    <div id="navigate5" class="ng-box">新工科实验班</div>
+    <div id="navigate6" class="ng-box">学习交流</div>
+  </div>
+  <div id="rightBox" class="right-box">
+    <a href="#"><button class="btn-circle nav-left-box">教学平台</button></a>
+    <span class="login-logo">HW</span> 
+    <span>hw123456</span>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="header">
+    <div class="swiper-container">
+      <!-- <ul id="swiper-wrapper">
+        <li class="swiper-slide swipper-slide-active">
+          <img src="https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.19.003/banner-2.64b1407e7a8db89d6cf2.jpg">
+        </li>
+        <li class="swiper-slide">
+          <img src="https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.19.003/banner-3.ce76c93c7a8a149ce2a2.jpg">
+        </li>
+        <li class="swiper-slide">
+          <img src="https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.19.003/banner-4.4ac0f6534a11844638e4.jpg">
+        </li>
+        <li class="swiper-slide">
+          <img src="https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.19.003/banner-6.80cafe61bcb20a98eb1e.jpg">
+        </li>
+        <li class="swiper-slide">
+          <img src="https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.19.003/banner-8.d14241daf518717981c6.jpg">
+        </li>
+      </ul>
+    </div> -->
+    <!--页面头部轮播图区域-->
+    <!-- <div class="swiper-paganition">
+      <span class="swiper-paganition-bullet-active" id="bullet-1"></span>
+      <span class="swiper-paganition-bullet" id="bullet-2"></span>
+      <span class="swiper-paganition-bullet" id="bullet-3"></span>
+      <span class="swiper-paganition-bullet" id="bullet-4"></span>
+      <span class="swiper-paganition-bullet" id="bullet-5"></span>
+    </div> -->
+    <!--提示：不需要实现轮播图效果-->
+</div>
+
+<div class="content">
+    <!--页面内容区域-->
+    <div class="intro-box">
+        <!--classroom介绍区域-->
+        <div class="intro-box-left">
+          Classroom是基于华为云的云上软件教学服务，支持高校师生实现备课、上课、作业、考试、实验、实训等全教学流程的线上教学，提供多类习题自动判题、企业级DevOps实训、免费在线习题库等众多高级特性辅助进行数字化教学转型。
+        </div>
+        <a class="start-class">
+          <button>开始上课</button>
+        </a>
+    </div>
+    <div class="class-box">
+        <!--云课堂区域-->
+          <section class="course-title">
+            <h3>云课堂</h3>
+            <span>免费精品公开课，覆盖丰富知识点、课件与在线习题</span>
+          </section>
+          <div><!--下面的course-card要用div包起来，否则:nth-child会有问题-->
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg1"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">区块链精品实践课</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">Classroom</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">华为云</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="本课程由浅入深的介绍区块链技术缘起、原理机制、演进和发展现状，分享区块链典型应用场景及特点。了解华为云区块链的方案及特点，参与动手实验。从入门到实践，循序渐进一站式学习。">
+                    本课程由浅入深的介绍区块链技术缘起、原理机制、演进和发展现状，分享区块链典型应用场景及特点。了解华为云区块链的方案及特点，参与动手实验。从入门到实践，循序渐进一站式学习。
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg2"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">基于新工科的软件工程企业级专家实践课</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">马瑞新&姚冬、...</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">大连理工大学&...</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="停课不停学，为了能够让同学们在家即可学习JAVA，大连理工大学软件学院基于华为云Classroom组织在线直播授课，采用基础知识讲解、
+  在线编程、自动评分、任务闯关、项目训练等多种形式进行教学与实践，欢迎全国有JAVA学习和教学需求的学生和老师在线上观看教学。">
+                    停课不停学，为了能够让同学们在家即可学习JAVA，大连理工大学软件学院基于华为云Classroom组织在线直播授课，采用基础知识讲解、
+  在线编程、自动评分、任务闯关、项目训练等多种形式进行教学与实践，欢迎全国有JAVA学习和教学需求的学生和老师在线上观看教学。
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg3"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">HE2E DevOps实践</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">Classroom</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">华为云</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="HE2E即华为端到端的DevOps实施框架，集合了业界先进的实践，结合华为30年研发经验，形成的一套可操作可落地的敏捷开发方法论，">
+                    HE2E即华为端到端的DevOps实施框架，集合了业界先进的实践，结合华为30年研发经验，形成的一套可操作可落地的敏捷开发方法论，
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg4"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">C语言程序设计</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">Classroom</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">华为云</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="本课程适合作为高等学校计算机专业及相关专业C语言程序设计课程的教材，也可作为计算机等级考试参考书，还可供从事计算机软件开发人员参考使用。主要包含，C语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件。附有习题，习题覆盖知识重点，题型丰富。">
+                    本课程适合作为高等学校计算机专业及相关专业C语言程序设计课程的教材，也可作为计算机等级考试参考书，还可供从事计算机软件开发人员参考使用。主要包含，C语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件。附有习题，习题覆盖知识重点，题型丰富。
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg5"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">Web实践课</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">Classroom</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">华为云</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="本门课程涵盖：WEB基础、CSS、JS、H5等教学内容组成，学生可以逐步提升前端开发能力。">
+                    本门课程涵盖：WEB基础、CSS、JS、H5等教学内容组成，学生可以逐步提升前端开发能力。
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="course-card">
+              <a href="#" class="course-card">
+                <div class="card-home card-home-bg6"></div>
+                <div class="card-wrapper">
+                  <div class="card-content">
+                    <span class="card-item-name">人工智能：算法与实践</span>
+                    <div class="card-item-info clearfix">
+                      <span class="card-item-teacher">
+                        <i class="icon-classroom-user"></i>
+                        <span class="teacher-name">Classroom</span>
+                      </span>
+                      <span class="card-item-place">
+                        <i class="icon-classroom-school"></i>
+                        <span class="place-name">华为云</span>
+                      </span>
+                      <span class="card-item-time">6小时</span>
+                    </div>
+                  </div>
+                  <div class="card-desc" title="本课程讲述的是有关人工智能算法与实践的内容，并介绍相关的数学基础、相关应用及工具，以及如何在实际环境中使用它们。课程不仅仅介绍了各种人工智能算法的理论知识，更是通过建立多个实际案例、习题测评，引导学生在实际项目中学到相关知识经验，同时老师可以灵活安排学生的学习任务，有效地对学生的知识吸收情况做针对性的解决。课程开发环境为python3.6及以上 + Anaconda3 。">
+                    本课程讲述的是有关人工智能算法与实践的内容，并介绍相关的数学基础、相关应用及工具，以及如何在实际环境中使用它们。课程不仅仅介绍了各种人工智能算法的理论知识，更是通过建立多个实际案例、习题测评，引导学生在实际项目中学到相关知识经验，同时老师可以灵活安排学生的学习任务，有效地对学生的知识吸收情况做针对性的解决。课程开发环境为python3.6及以上 + Anaconda3 。
+                  </div>
+                  <div class="card-line"></div>
+                  <div class="card-freetime"><span>限时免费</span></div>
+                </div>
+              </a>
+            </div>
+            <div class="bottom-btn" id="seeMore">
+                <button class="btn-circle">查看更多</button>
+            </div>
+      </div>
+          </div>
+    <div class="market-box">
+        <!--教学市场区域-->
+        <section class="course-title">
+          <h3>教学市场</h3>
+          <span>丰富教学资源辅助高效教学，免费习题库一键获取</span>
+        </section>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg7"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">JAVA-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖JAVA的相关知识，习题涉及到基本数据类型、语句、类、封装继承、对象、接口、内部类、异常处理、字符串、实用类、多线程、输入输出流等相关知识。 习题类型包括单选题、编程题、单人项目题等，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对JAVA知识的掌握程度，提升学生的动手编码能">
+                本习题库覆盖JAVA的相关知识，习题涉及到基本数据类型、语句、类、封装继承、对象、接口、内部类、异常处理、字符串、实用类、多线程、输入输出流等相关知识。 习题类型包括单选题、编程题、单人项目题等，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对JAVA知识的掌握程度，提升学生的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>         
+           </a>
+        </div>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg8"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">C-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖C语言的相关知识，习题涉及到C语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能">
+                 本习题库覆盖C语言的相关知识，习题涉及到C语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>  
+          </a>
+        </div>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg9"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">Web-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖web开发相关知识点，对HTML、CSS、JavaScript等内容，进行了习题覆盖。习题类型包括单选题、编程题，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对Web知识的掌握程度，提升学生的动手编码能力。">
+                 本习题库覆盖C语言的相关知识，习题涉及到Web语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>  
+          </a>
+        </div>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg10"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">系统分析与设计-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖web开发相关知识点，对HTML、CSS、JavaScript等内容，进行了习题覆盖。习题类型包括单选题、编程题，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对Web知识的掌握程度，提升学生的动手编码能力。">
+                 本习题库覆盖C语言的相关知识，习题涉及到Web语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>  
+          </a>
+        </div>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg11"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">数据结构-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖web开发相关知识点，对HTML、CSS、JavaScript等内容，进行了习题覆盖。习题类型包括单选题、编程题，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对Web知识的掌握程度，提升学生的动手编码能力。">
+                 本习题库覆盖C语言的相关知识，习题涉及到Web语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>  
+          </a>
+        </div>
+        <div class="course-card">
+          <a href="#">
+            <div class="card-home card-home-bg12"></div>
+            <div class="card-wrapper">
+              <div class="card-content">
+                <span class="card-item-name">Python-习题库</span>
+                <div class="card-item-info clearfix">
+                  <span class="card-item-teacher">
+                    <i class="icon-classroom-user"></i>
+                    <span class="teacher-name">Classroom</span>
+                  </span>
+                  <span class="card-item-place">
+                    <i class="icon-classroom-school"></i>
+                    <span class="place-name">华为云</span>
+                  </span>
+                </div>
+              </div>
+              <div class="card-desc" title="本习题库覆盖web开发相关知识点，对HTML、CSS、JavaScript等内容，进行了习题覆盖。习题类型包括单选题、编程题，每个习题都与知识点相对于，通过这些习题，可以很好的检查学生对Web知识的掌握程度，提升学生的动手编码能力。">
+                 本习题库覆盖C语言的相关知识，习题涉及到Web语言概述，数据类型，基本语句与结构化程序设计，数组，函数和模块化程序设计，指针，预处理命令，复杂数据类型，文件操作等。习题类型包括单选题、编程题，每个习题都与知识点相对应，所有习题支持自动判题，通过这些习题，可以很好的检查学生对C语言知识的掌握程度，提升学的动手编码能 。
+              </div>
+              <div class="card-line"></div>
+              <div class="card-freetime"><span>限时免费</span></div>
+            </div>  
+          </a>
+        </div>
+        <div class="bottom-btn" id="seeMore">
+          <button class="btn-circle">查看更多</button>
+        </div>
+    </div>
+    <div class="activity-box">
+        <!--活动公告区域-->
+        <section class="course-title">
+          <h3>活动公告</h3>
+        </section>
+        <div class="notice-box">
+          <div class="notice-content ">
+            <a class="left-icon notice-content-bg1" target="_blank" href="https://classroom.devcloud.cn-north-4.huaweicloud.com/joinclass/2806547cce804017884bfd0ac7847c0b/1">
+              
+            </a>
+            <div class="pull-left">
+              <a class="notice-title">大连理工大学与华为软件工程大师华山论剑，邀您参与。</a>
+            </div>
+            <ul classs="notice-info">
+              <li>Classroom</li>
+              <li>2020/2/21</li>
+            </ul>
+          </div>
+        </div>
+        <div class="notice-box">
+          <div class="notice-content ">
+            <a class="left-icon notice-content-bg2" target="_blank" href="http://mudu.tv/app.php?a=channelList&id=25097">
+              
+            </a>
+            <div class="pull-left">
+              <a class="notice-title">大连理工、华为云、目睹有课三方携手直播JAVA线上教学。</a>
+            </div>
+            <ul classs="notice-info">
+              <li>Classroom</li>
+              <li>2020/2/21</li>
+            </ul>
+          </div>
+        </div>
+        <div class="notice-box">
+          <div class="notice-content ">
+            <a class="left-icon notice-content-bg3" target="_blank" href="https://bbs.huaweicloud.com/forum/thread-40059-1-1.html">
+            </a>
+            <div class="pull-left">
+              <a class="notice-title"> 【Part1】玩转华为云Classroom，在线教学so easy！ </a>
+            </div>
+            <ul classs="notice-info">
+              <li>Classroom</li>
+              <li>2020/2/21</li>
+            </ul>
+          </div>
+        </div>
+        <div class="notice-box">
+          <div class="notice-content ">
+            <a class="left-icon notice-content-bg4" target="_blank" href="https://bbs.huaweicloud.com/forum/thread-39946-1-1.html">
+              
+            </a>
+            <div class="pull-left">
+              <a class="notice-title"> Classroom开放免费高校自学课程，与您并肩战“疫”！ </a>
+            </div>
+            <ul classs="notice-info">
+              <li>Classroom</li>
+              <li>2020/2/21</li>
+            </ul>
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <!--页面尾部区域-->
+    <div class="footer-content">
+      <div class="clearfix">
+        <div class="footer-copyright">
+          版权所有 © 华为软件技术有限公司 2020保留一切权利苏ICP备17040376号-32苏B2-20130048号代理域名注册服务机构：新网
+        </div>
+        <div class="footer-law">法律声明 | 隐私政策</div>
+      </div>
+      <div class="footer-record">苏公网安备 32011402010008号</div>
+    </div>
+    <!--提示：页面尾部内容可以简化处理-->
+</div>
+</div>
+
+</body>
+</html> 

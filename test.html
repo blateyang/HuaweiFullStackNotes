@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .outDiv {
+      width: 200px;
+      height: 200px;
+      background-color: blue;
+      display: grid;
+      place-items: center;
+/*      position: relative;*/
+    }
+
+    .inDiv {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+/*      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;*/
+    }
+
+    .layout {
+      width: 800px;
+      height: 100px;
+      border: 1px solid black;
+      overflow: auto; /* 清除浮动 */
+    }
+
+    .layout div {
+      float: left;
+    }
+
+    .center {
+      background-color: red;
+      width: 100%;
+    }
+
+    .left {
+      background-color: blue;
+      width: 200px;
+      margin-left: -100%;
+    }
+
+    .right {
+      background-color: blue;
+      width: 200px;
+      margin-left: -200px;
+    }
+    .content {
+      margin-left: 200px;
+      margin-right: 200px;
+    }
+
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+    .container {
+	display: flex;
+	}
+	
+  .sidebar {
+      background: red;
+      height: 100px;
+      flex: 0 0 50px;
+    }
+     
+    .main {
+      background: blue;
+      height: 100px;
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <p id="p1">水平垂直居中</p>
+  <div class="outDiv">
+    <div class="inDiv">
+
+    </div>
+  </div>
+  <p>双飞翼布局</p>
+  <div class="layout">
+    <div class="center">
+      <div class="content">cneter</div>
+    </div>
+    <div class="left">left</div>
+    <div class="right">right</div>
+  </div>
+  <p>三栏布局网格实现</p>
+  <div class="container">
+    <div class="sidebar leftbar">left</div>
+    <div class="main">center</div> 
+    <div class="sidebar rightbar">right</div>
+  </div>
+  <p>两栏布局</p>
+  <div class="sidebar leftbar">left</div>
+  <div class="sidebar rightbar">right</div>
+  <div class="main">center</div>
+  <script>
+    var nodeName = "foo"
+    var para = document.getElementById("p1")
+    para.addEventListener('click', function() {console.log(this.nodeName);}, false)
+  </script>
+</body>
+</html>

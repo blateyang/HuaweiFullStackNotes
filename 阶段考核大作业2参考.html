@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>轮播图</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .box {
+      transition: all 0.5s;
+      position: relative;
+      left: 0;
+    }
+
+    /* //轮播图css样式部分 */
+
+    .box img {
+      width: 100vw;
+      height: 100%;
+      float: left;
+    }
+
+    .swiper-pagination-box { 
+      height: 30px;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      z-index: 3;
+      display: flex;
+    }
+
+    .swiper-pagination-item {
+      height: 8px;
+      width: 8px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, .4);
+      margin: 11px 5px;
+      transition: all 0.3s;
+    }
+
+    .swiper-pagination-item-active {
+      padding: 0 10px; /*会将子弹头撑开*/
+      background: #5E7CE0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="box" id="swiper-box">
+      <!-- 轮播图html部分 -->
+    </div>
+    <div class="swiper-pagination-box" id="pagination-box">
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    /*轮播图javascript部分*/
+    const box = document.getElementById('swiper-box')
+    const paginationBox = document.getElementById('pagination-box')
+    let nowIndex = 0; //当前的轮播图index
+    let timer = null; //计时器
+    const swiperData = [
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-8.d14241daf518717981c6.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-1.fdbf82d4c2ca7fad3225.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-2.64b1407e7a8db89d6cf2.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-3.ce76c93c7a8a149ce2a2.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-5.0e9bb68d425a4a5c3b18.jpg' },
+      { imgurl: 'https://res.devcloud.huaweicloud.com/obsdevui/diploma/8.1.17.002/banner-6.80cafe61bcb20a98eb1e.jpg' }
+    ]
+    //设置轮播图容器的宽度
+    box.style.width = `${parseInt(swiperData.length+1) *100}vw`;
+    // 添加轮播图
+    function addSwiper() {
+      for (let i in swiperData) {
+        const img = document.createElement("img");
+        img.src = swiperData[i].imgurl;
+        box.appendChild(img);
+        const sapn = document.createElement("span");
+        sapn.classList.add("swiper-pagination-item");
+        if (i == 0) {
+          sapn.classList.add("swiper-pagination-item-active");
+        }
+        paginationBox.appendChild(sapn);
+      }
+      //在图片最后添加第一张图(还要多加一张是为了实现从最后一张图过渡到第一张时不会显得突兀)
+      const img = document.createElement("img");
+      img.src = swiperData[0].imgurl;
+      box.appendChild(img);
+    }
+    addSwiper();
+    // 获取控制点
+    const paginationItems = document.querySelectorAll(".swiper-pagination-box .swiper-pagination-item")
+    // 自动播放
+    function autoplay() {
+      timer = setInterval(() => {
+        changeSwiperItem()
+      }, 5000)
+    }
+    autoplay()
+    //图片移动
+    function changeSwiperItem() {
+      const swiperItems = document.querySelectorAll(".box img")
+      if (nowIndex + 1 == swiperData.length) { // 当索引为最后一张时，下一次应重新显示第一张
+        box.style.left = `-${(nowIndex+1) *100}vw`;
+        nowIndex = 0;
+        //先清除动画，在把图片移到第一张上（右边第一张图快速过渡到左边第一张图）
+        setTimeout(() => {
+          box.style.transition = "0s"
+          box.style.left = `-0vw`;
+        }, 2000)
+      } else {
+        box.style.transition = "all 0.5s"
+        box.style.left = `-${(nowIndex +1) *100}vw`; //先左移box，再加索引
+        nowIndex++;
+      }
+
+      delClass()
+      paginationItems[nowIndex].className = 'swiper-pagination-item swiper-pagination-item-active';
+    }
+    //除样式
+    function delClass() {
+      for (let i in paginationItems) {
+        paginationItems[i].className = 'swiper-pagination-item';
+      }
+    }
+    //给每个控制点绑定事件
+    function paginationItemClick() {
+      for (let i in paginationItems) {
+        paginationItems[i].onclick = function () {
+          delClass()
+          this.className = 'swiper-pagination-item swiper-pagination-item-active';
+          nowIndex = parseInt(i);
+          clearInterval(timer)
+          box.style.transition = "all 0.5s"
+          box.style.left = `-${(nowIndex) *100}vw`;
+          autoplay()
+        }
+      }
+    }
+    paginationItemClick()
+  </script>
+</body>
+
+</html>
