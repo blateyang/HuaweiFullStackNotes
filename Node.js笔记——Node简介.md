@@ -132,6 +132,7 @@ fs模块中的文件操作都有**同步**和**异步**两种形式可供调用
 - 关闭文件
   - fs.closeSync(fd)
   - fs.close(fd, callback)
+  
 以上函数和同步文件写入（fs.writeSync)、异步文件写入(fs.write)、同步文件读取(fs.readSync)、异步文件读取(fs.read)结合使用
 ### 5.3 简单文件写入
 - fs.writeFileSync(file, data[,options]]); // file:文件路径，data: 要写入的数据（String或Buffer); options:json对象，包含属性（encoding, flag, mode)
