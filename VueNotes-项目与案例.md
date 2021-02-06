@@ -124,6 +124,7 @@ eslint是代码规范检查工具，可以检查ES，JSX, css等是否合规及�
 父组件标签parent.vue
 ```html
 <child>
+  <!--注意在2.6以上版本中，slot属性的用法已被废弃，换成了带"v-slot:插槽名"的template标签-->
   <div slot='xxx'>xxx对应的标签结构</div>
   <div slot='yyy'>yyy对应的标签结构</div>
 </child>
@@ -173,7 +174,8 @@ watch: {// 监视
 利用pubsub-js库的PubSub对象
 1. 订阅消息对应绑定事件监听
 ```
-PubSub.subscribe("deleteTodo", (msg, index) => { // 不能使用function(msg, index)形式，因为下面的this就会变成指向PubSub对象了
+PubSub.subscribe("deleteTodo", (msg, index) => { 
+  // 不能使用function(msg, index)形式，因为该函数是由PubSub管理的，下面的this就会变成指向PubSub对象了
   this.deleteTodo(index)
 })
 ```
